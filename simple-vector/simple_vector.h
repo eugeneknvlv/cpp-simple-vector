@@ -76,14 +76,18 @@ public:
     }   
 
     SimpleVector& operator=(const SimpleVector& other) {
-        assert(arr_ptr_.Get() != other.arr_ptr_.Get());
+        if (arr_ptr_.Get() == other.arr_ptr_.Get()) {
+            return *this;
+        }
         SimpleVector tmp(other);
         swap(tmp);
         return *this;
     }
 
     SimpleVector& operator=(SimpleVector&& other) {
-        assert(arr_ptr_.Get() != other.arr_ptr_.Get());
+        if (arr_ptr_.Get() == other.arr_ptr_.Get()) {
+            return *this;
+        }
         SimpleVector tmp(std::move(other));
         swap(tmp);
         return *this;
@@ -102,6 +106,7 @@ public:
     }
 
     Iterator Insert(ConstIterator pos, Type&& value) {
+        assert(pos >= begin() && pos <= end());
         Iterator it_to_insert = const_cast<Iterator>(pos);
         Iterator it_to_return;
         if (size_ != capacity_) {
@@ -122,6 +127,7 @@ public:
     }
 
     Iterator Insert(ConstIterator pos, const Type& value) {
+        assert(pos >= begin() && pos <= end());
         Iterator it_to_insert = const_cast<Iterator>(pos);
         Iterator it_to_return;
         if (size_ != capacity_) {
@@ -142,6 +148,7 @@ public:
     }
 
     Iterator Erase(ConstIterator pos) {
+        assert(pos >= begin() && pos <= end() && size_ != 0);
         Iterator it_to_erase = const_cast<Iterator>(pos);
         std::move(it_to_erase + 1, end(), it_to_erase);
         --size_;
@@ -183,11 +190,13 @@ public:
 
     // Возвращает ссылку на элемент с индексом index
     Type& operator[](size_t index) noexcept {
+        assert(index < size_);
         return arr_ptr_[index];
     }
 
     // Возвращает константную ссылку на элемент с индексом index
     const Type& operator[](size_t index) const noexcept {
+        assert(index < size_);
         return arr_ptr_[index];
     }
 
