@@ -76,7 +76,7 @@ public:
     }   
 
     SimpleVector& operator=(const SimpleVector& other) {
-        if (arr_ptr_.Get() == other.arr_ptr_.Get()) {
+        if (this == &other) {
             return *this;
         }
         SimpleVector tmp(other);
@@ -85,7 +85,7 @@ public:
     }
 
     SimpleVector& operator=(SimpleVector&& other) {
-        if (arr_ptr_.Get() == other.arr_ptr_.Get()) {
+        if (this == &other) {
             return *this;
         }
         SimpleVector tmp(std::move(other));
@@ -102,6 +102,7 @@ public:
     }
 
     void PopBack() noexcept {
+        assert(!IsEmpty());
         --size_;
     }
 
@@ -148,7 +149,7 @@ public:
     }
 
     Iterator Erase(ConstIterator pos) {
-        assert(pos >= begin() && pos <= end() && size_ != 0);
+        assert(pos >= begin() && pos <= end() && !IsEmpty());
         Iterator it_to_erase = const_cast<Iterator>(pos);
         std::move(it_to_erase + 1, end(), it_to_erase);
         --size_;
