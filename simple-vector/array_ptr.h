@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cstdlib>
+#include <utility>
 
 template <typename Type>
 class ArrayPtr {
@@ -23,12 +24,21 @@ public:
     // Запрещаем копирование
     ArrayPtr(const ArrayPtr&) = delete;
 
+    ArrayPtr(ArrayPtr&& other) {
+        raw_ptr_ = std::move(other.Get());
+    }
+
     ~ArrayPtr() {
         delete[] raw_ptr_;
     }
 
     // Запрещаем присваивание
     ArrayPtr& operator=(const ArrayPtr&) = delete;
+
+    ArrayPtr& operator=(ArrayPtr&& other) {
+        ArrayPtr(std::move(other.Get()));
+        return *this;
+    }
 
     // Прекращает владением массивом в памяти, возвращает значение адреса массива
     // После вызова метода указатель на массив должен обнулиться
